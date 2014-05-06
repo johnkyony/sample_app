@@ -18,9 +18,11 @@ describe User do
   it { should respond_to(:authenticate) }
   it { should respond_to(:admin) }
   it { should respond_to(:microposts) }
-
+  it { should respond_to(:feed) }
   it { should be_valid }
   it { should_not be_admin }
+
+
 
   describe "with admin attribute set to 'true'" do
     before do
@@ -112,8 +114,17 @@ describe "remember token" do
   end
   
 describe "micropost associations" do
+  describe "status" do
+      let(:unfollowed_post) do
+        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+      end
 
-    before { @user.save }
+      its(:feed) { should include(newer_micropost) }
+      its(:feed) { should include(older_micropost) }
+      its(:feed) { should_not include(unfollowed_post) }
+    end
+
+   before { @user.save }
     let!(:older_micropost) do
       FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
     end
